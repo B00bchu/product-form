@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>บันทึกการรับ Product</title>
+    <!-- Minimal pastel theme → blue with logo -->
+    <style>
+      :root {
+        --bg: #f5faff;
+        --surface: #ffffff;
+        --primary: #4a90e2; /* blue */
+        --primary-dark: #357ab7;
+        --accent: #cce4ff;
+        --text: #333;
+      }
+
+      * {
+        box-sizing: border-box;
+        font-family: "Inter", sans-serif;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg);
+        color: var(--text);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+
+      .card {
+        background: var(--surface);
+        width: min(90%, 480px);
+        padding: 2rem;
+        border-radius: 1.5rem;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+        text-align: center;
+      }
+
+      .logo {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+        margin: 0 0 1.5rem;
+        color: var(--primary-dark);
+      }
+
+      label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        text-align: left;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1.25rem;
+        border: 2px solid var(--primary);
+        border-radius: 0.75rem;
+        background: #fcfffc;
+        font-size: 1rem;
+        transition: border-color 0.2s;
+      }
+
+      input:focus,
+      select:focus {
+        outline: none;
+        border-color: var(--primary-dark);
+      }
+
+      button {
+        width: 100%;
+        background: var(--primary);
+        border: none;
+        color: #fff;
+        font-size: 1rem;
+        padding: 0.75rem;
+        border-radius: 0.75rem;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.1s;
+      }
+
+      button:hover {
+        background: var(--primary-dark);
+      }
+
+      button:active {
+        transform: scale(0.98);
+      }
+
+      .note {
+        margin-top: 1rem;
+        text-align: center;
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="logo">IPE</div>
+      <h1>บันทึกการรับ Product</h1>
+      <!-- IMPORTANT: Replace FORM_ID with your real form ID -->
+      <form id="gsForm">
+        <label for="date">Date</label>
+        <!-- entry.795852160 = Date field -->
+        <input
+          type="date"
+          id="date"
+          name="entry.795852160"
+          required
+        />
+
+        <label for="product">Product Name</label>
+        <!-- entry.1191668168 = Dropdown Product -->
+        <select id="product" name="entry.1191668168" required>
+          <option value="">— Select —</option>
+          <option value="692">692</option>
+          <option value="693">693</option>
+          <option value="429">429</option>
+          <option value="157">157</option>
+          <option value="743">743</option>
+        </select>
+
+        <label for="job">Job</label>
+        <!-- entry.739350939 = Job field -->
+        <input
+          type="text"
+          id="job"
+          name="entry.739350939"
+          placeholder="e.g. A, B …"
+          required
+        />
+
+        <label for="qty">Quantity (pcs)</label>
+        <!-- entry.1022205944 = Quantity field -->
+        <input
+          type="number"
+          id="qty"
+          name="entry.1022205944"
+          min="1"
+          step="1"
+          required
+        />
+
+        <button type="submit">ส่ง</button>
+        <div class="note" id="note"></div>
+      </form>
+    </div>
+
+    <script>
+      // === Settings ===
+      const FORM_ID = "1FAIpQLSfEfwJlZW98NqRJ3L6Udjq2MlD-rNvBamimKRGraR_eI9eG5A";
+      const FORM_ACTION = `https://docs.google.com/forms/d/e/${FORM_ID}/formResponse`;
+
+      const form = document.getElementById("gsForm");
+      const note = document.getElementById("note");
+
+      // Default the date to today (local)
+      document.getElementById("date").valueAsDate = new Date();
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        note.textContent = "Submitting…";
+
+        const formData = new FormData(form);
+
+        try {
+          // POST the form data to Google Forms
+          const res = await fetch(FORM_ACTION, {
+            method: "POST",
+            mode: "no-cors", // prevent CORS blocking; no response body returned
+            body: formData,
+          });
+
+          // Google returns 0K opaque response; show success UI regardless
+          form.reset();
+          note.textContent = "✅ Saved successfully!";
+          note.style.color = "green";
+        } catch (err) {
+          console.error(err);
+          note.textContent = "❌ Failed to submit. Please try again.";
+          note.style.color = "red";
+        }
+      });
+    </script>
+  </body>
+</html>
